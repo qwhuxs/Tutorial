@@ -124,16 +124,27 @@ export async function fetchInvoicesPages(query: string) {
 export async function fetchInvoiceById(id: string) {
   try {
     const data = await sql<InvoiceForm[]>`
-      SELECT invoices.id, invoices.customer_id, invoices.amount, invoices.status
+      SELECT
+        invoices.id,
+        invoices.customer_id,
+        invoices.amount,
+        invoices.status
       FROM invoices
-      WHERE invoices.id = ${id}`;
+      WHERE invoices.id = ${id}
+    `;
 
-    if (!data[0]) return null;
+    console.log(data); 
 
-    return {
+    if (!data[0]) {
+      return null;
+    }
+
+    const invoice = {
       ...data[0],
-      amount: data[0].amount / 100, 
+      amount: data[0].amount / 100,
     };
+
+    return invoice;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoice.');
